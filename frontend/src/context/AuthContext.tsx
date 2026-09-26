@@ -1,86 +1,89 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
-import { currentUserMock } from '../data/mockData';
+import { api, tokenStorage, ApiError } from '../lib/api';
 
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password?: string) => Promise<boolean>;
-  signup: (fullName: string, email: string, company: string) => Promise<boolean>;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  signup: (fullName: string, email: string, company: string, password: string) => Promise<boolean>;
   logout: () => void;
-  updateUser: (updatedFields: Partial<User>) => void;
-  verifyEmail: () => void;
+  updateUser: (updatedFields: Partial<User>) => Promise<void>;
+  verifyEmail: () => Promise<void>;
   resetPassword: (email: string) => Promise<boolean>;
+  confirmResetPassword: (token: string, newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'aevona_auth_user';
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse saved auth user', e);
-      }
-    }
-    // Default to mock logged in user for easy dashboard testing, or set default currentUserMock
-    return currentUserMock;
-  });
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-    }
-  }, [currentUser]);
-
-  const login = async (email: string): Promise<boolean> => {
-    // Frontend mock login
-    const user: User = {
-      ...currentUserMock,
-      email: email || currentUserMock.email,
-      name: email ? email.split('@')[0].replace('.', ' ') : currentUserMock.name
+    const restoreSession = async () => {
+      if (!tokenStorage.getAccessToken()) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const user = await api.auth.me();
+        setCurrentUser(user);
+      } catch {
+        tokenStorage.clear();
+      } finally {
+        setIsLoading(false);
+      }
     };
+    restoreSession();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const tokens = await api.auth.login(email, password);
+    tokenStorage.setTokens(tokens.access_token, tokens.refresh_token);
+    const user = await api.auth.me();
     setCurrentUser(user);
     return true;
   };
 
-  const signup = async (fullName: string, email: string, company: string): Promise<boolean> => {
-    const user: User = {
-      ...currentUserMock,
-      id: `user-${Date.now()}`,
-      name: fullName,
-      email,
-      company,
-      onboarded: false,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
+  const signup = async (fullName: string, email: string, company: string, password: string): Promise<boolean> => {
+    const tokens = await api.auth.signup(fullName, email, company, password);
+    tokenStorage.setTokens(tokens.access_token, tokens.refresh_token);
+    const user = await api.auth.me();
     setCurrentUser(user);
     return true;
   };
 
   const logout = () => {
+    tokenStorage.clear();
     setCurrentUser(null);
   };
 
-  const updateUser = (updatedFields: Partial<User>) => {
-    if (!currentUser) return;
-    const updated = { ...currentUser, ...updatedFields };
-    setCurrentUser(updated);
+  const updateUser = async (updatedFields: Partial<User>) => {
+    const user = await api.users.updateMe(updatedFields);
+    setCurrentUser(user);
   };
 
-  const verifyEmail = () => {
+  const verifyEmail = async () => {
     if (!currentUser) return;
-    setCurrentUser({ ...currentUser });
+    const user = await api.auth.verifyEmail();
+    setCurrentUser(user);
   };
 
   const resetPassword = async (email: string): Promise<boolean> => {
+    await api.auth.forgotPassword(email);
     return true;
+  };
+
+  const confirmResetPassword = async (token: string, newPassword: string): Promise<boolean> => {
+    try {
+      await api.auth.resetPassword(token, newPassword);
+      return true;
+    } catch (err) {
+      if (err instanceof ApiError) return false;
+      throw err;
+    }
   };
 
   return (
@@ -88,12 +91,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         currentUser,
         isAuthenticated: !!currentUser,
+        isLoading,
         login,
         signup,
         logout,
         updateUser,
         verifyEmail,
-        resetPassword
+        resetPassword,
+        confirmResetPassword
       }}
     >
       {children}

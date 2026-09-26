@@ -50,10 +50,10 @@ export const SignupPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await signup(fullName, email, company);
+      await signup(fullName, email, company, password);
       navigate('/verify-email');
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }

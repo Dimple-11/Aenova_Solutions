@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { HelpCircle, Search, Plus, MessageSquare, ChevronDown, ChevronUp, FileText, CheckCircle2 } from 'lucide-react';
-import { FAQsMock } from '../../data/mockData';
 import { useDashboard } from '../../context/DashboardContext';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
@@ -8,7 +7,7 @@ import { Modal } from '../../components/ui/Modal';
 import { SupportTicket } from '../../types';
 
 export const SupportPage: React.FC = () => {
-  const { supportTickets, createSupportTicket } = useDashboard();
+  const { supportTickets, createSupportTicket, faqs } = useDashboard();
 
   const [search, setSearch] = useState('');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
@@ -20,7 +19,7 @@ export const SupportPage: React.FC = () => {
   const [priority, setPriority] = useState<SupportTicket['priority']>('High');
   const [description, setDescription] = useState('');
 
-  const filteredFaqs = FAQsMock.filter(f => f.question.toLowerCase().includes(search.toLowerCase()) || f.answer.toLowerCase().includes(search.toLowerCase()));
+  const filteredFaqs = faqs.filter(f => f.question.toLowerCase().includes(search.toLowerCase()) || f.answer.toLowerCase().includes(search.toLowerCase()));
 
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();

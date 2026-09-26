@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -10,7 +10,12 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [searchParams] = useSearchParams();
+  const [error, setError] = useState(
+    searchParams.get('error') === 'oauth_not_configured'
+      ? 'Social sign-in is not configured yet. Please sign in with your email and password.'
+      : ''
+  );
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -29,7 +34,7 @@ export const LoginPage: React.FC = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Invalid login credentials. Please try again.');
+      setError(err instanceof Error ? err.message : 'Invalid login credentials. Please try again.');
     } finally {
       setLoading(false);
     }

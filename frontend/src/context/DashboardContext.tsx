@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   Project,
   ProjectTask,
@@ -9,20 +9,16 @@ import {
   MessageItem,
   TeamMember,
   SupportTicket,
-  BillingPlan
+  BillingPlan,
+  Invoice
 } from '../types';
-import {
-  initialProjectsMock,
-  initialTasksMock,
-  initialFilesMock,
-  activeServiceRequestsMock,
-  notificationsMock,
-  conversationsMock,
-  messagesMock,
-  teamMembersMock,
-  billingPlansMock,
-  supportTicketsMock
-} from '../data/mockData';
+import { api } from '../lib/api';
+import { useAuth } from './AuthContext';
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
 
 interface DashboardContextType {
   projects: Project[];
@@ -34,34 +30,39 @@ interface DashboardContextType {
   messages: Record<string, MessageItem[]>;
   teamMembers: TeamMember[];
   billingPlans: BillingPlan[];
+  invoices: Invoice[];
   supportTickets: SupportTicket[];
-  
+  faqs: FAQ[];
+  isLoading: boolean;
+
   // Handlers
-  addProject: (project: Omit<Project, 'id' | 'progress' | 'tasksCount' | 'teamMembers'>) => void;
-  updateProject: (id: string, updates: Partial<Project>) => void;
-  deleteProject: (id: string) => void;
+  addProject: (project: Omit<Project, 'id' | 'progress' | 'tasksCount' | 'teamMembers'>) => Promise<void>;
+  updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
 
-  addTask: (task: Omit<ProjectTask, 'id' | 'createdAt'>) => void;
-  updateTask: (id: string, updates: Partial<ProjectTask>) => void;
-  deleteTask: (id: string) => void;
-  toggleTaskComplete: (id: string) => void;
+  addTask: (task: Omit<ProjectTask, 'id' | 'createdAt'>) => Promise<void>;
+  updateTask: (id: string, updates: Partial<ProjectTask>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  toggleTaskComplete: (id: string) => Promise<void>;
 
-  addFile: (file: Omit<ProjectFile, 'id' | 'uploadedAt'>) => void;
-  deleteFile: (id: string) => void;
+  addFile: (file: Omit<ProjectFile, 'id' | 'uploadedAt'>) => Promise<void>;
+  deleteFile: (id: string) => Promise<void>;
 
-  requestService: (serviceId: string, title: string, category: string, budget: string, notes: string) => void;
+  requestService: (serviceId: string, title: string, category: string, budget: string, notes: string) => Promise<void>;
 
-  markNotificationRead: (id: string) => void;
-  markAllNotificationsRead: () => void;
+  markNotificationRead: (id: string) => Promise<void>;
+  markAllNotificationsRead: () => Promise<void>;
 
-  sendMessage: (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => void;
+  sendMessage: (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => Promise<void>;
 
-  inviteTeamMember: (name: string, email: string, role: TeamMember['role'], department: string) => void;
-  updateTeamMemberRole: (id: string, role: TeamMember['role']) => void;
-  removeTeamMember: (id: string) => void;
+  inviteTeamMember: (name: string, email: string, role: TeamMember['role'], department: string) => Promise<void>;
+  updateTeamMemberRole: (id: string, role: TeamMember['role']) => Promise<void>;
+  removeTeamMember: (id: string) => Promise<void>;
 
-  createSupportTicket: (subject: string, category: SupportTicket['category'], priority: SupportTicket['priority'], description: string) => void;
-  
+  createSupportTicket: (subject: string, category: SupportTicket['category'], priority: SupportTicket['priority'], description: string) => Promise<void>;
+
+  upgradePlan: (planId: string) => Promise<void>;
+
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isSearchModalOpen: boolean;
@@ -70,181 +71,221 @@ interface DashboardContextType {
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
+const emptyState = {
+  projects: [] as Project[],
+  tasks: [] as ProjectTask[],
+  files: [] as ProjectFile[],
+  serviceRequests: [] as ServiceRequest[],
+  notifications: [] as NotificationItem[],
+  conversations: [] as Conversation[],
+  messages: {} as Record<string, MessageItem[]>,
+  teamMembers: [] as TeamMember[],
+  billingPlans: [] as BillingPlan[],
+  invoices: [] as Invoice[],
+  supportTickets: [] as SupportTicket[],
+  faqs: [] as FAQ[]
+};
+
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [projects, setProjects] = useState<Project[]>(initialProjectsMock);
-  const [tasks, setTasks] = useState<ProjectTask[]>(initialTasksMock);
-  const [files, setFiles] = useState<ProjectFile[]>(initialFilesMock);
-  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(activeServiceRequestsMock);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(notificationsMock);
-  const [conversations, setConversations] = useState<Conversation[]>(conversationsMock);
-  const [messages, setMessages] = useState<Record<string, MessageItem[]>>(messagesMock);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(teamMembersMock);
-  const [billingPlans] = useState<BillingPlan[]>(billingPlansMock);
-  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(supportTicketsMock);
+  const { isAuthenticated } = useAuth();
+
+  const [projects, setProjects] = useState<Project[]>(emptyState.projects);
+  const [tasks, setTasks] = useState<ProjectTask[]>(emptyState.tasks);
+  const [files, setFiles] = useState<ProjectFile[]>(emptyState.files);
+  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(emptyState.serviceRequests);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(emptyState.notifications);
+  const [conversations, setConversations] = useState<Conversation[]>(emptyState.conversations);
+  const [messages, setMessages] = useState<Record<string, MessageItem[]>>(emptyState.messages);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(emptyState.teamMembers);
+  const [billingPlans, setBillingPlans] = useState<BillingPlan[]>(emptyState.billingPlans);
+  const [invoices, setInvoices] = useState<Invoice[]>(emptyState.invoices);
+  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(emptyState.supportTickets);
+  const [faqs, setFaqs] = useState<FAQ[]>(emptyState.faqs);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
+  const loadDashboardData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [
+        projectsRes,
+        tasksRes,
+        filesRes,
+        serviceRequestsRes,
+        notificationsRes,
+        conversationsRes,
+        teamMembersRes,
+        billingPlansRes,
+        invoicesRes,
+        supportTicketsRes,
+        faqsRes
+      ] = await Promise.all([
+        api.projects.list(),
+        api.tasks.list(),
+        api.files.list(),
+        api.serviceRequests.list(),
+        api.notifications.list(),
+        api.conversations.list(),
+        api.team.list(),
+        api.billing.plans(),
+        api.billing.invoices(),
+        api.support.tickets(),
+        api.support.faqs()
+      ]);
+
+      setProjects(projectsRes);
+      setTasks(tasksRes);
+      setFiles(filesRes);
+      setServiceRequests(serviceRequestsRes);
+      setNotifications(notificationsRes);
+      setConversations(conversationsRes);
+      setTeamMembers(teamMembersRes);
+      setBillingPlans(billingPlansRes);
+      setInvoices(invoicesRes);
+      setSupportTickets(supportTicketsRes);
+      setFaqs(faqsRes);
+
+      const messageEntries = await Promise.all(
+        conversationsRes.map(async (c) => [c.id, await api.conversations.messages(c.id)] as const)
+      );
+      setMessages(Object.fromEntries(messageEntries));
+    } catch (err) {
+      console.error('Failed to load dashboard data', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadDashboardData();
+    } else {
+      setProjects(emptyState.projects);
+      setTasks(emptyState.tasks);
+      setFiles(emptyState.files);
+      setServiceRequests(emptyState.serviceRequests);
+      setNotifications(emptyState.notifications);
+      setConversations(emptyState.conversations);
+      setMessages(emptyState.messages);
+      setTeamMembers(emptyState.teamMembers);
+      setBillingPlans(emptyState.billingPlans);
+      setInvoices(emptyState.invoices);
+      setSupportTickets(emptyState.supportTickets);
+      setFaqs(emptyState.faqs);
+    }
+  }, [isAuthenticated, loadDashboardData]);
+
   // Projects
-  const addProject = (newProj: Omit<Project, 'id' | 'progress' | 'tasksCount' | 'teamMembers'>) => {
-    const project: Project = {
-      ...newProj,
-      id: `proj-${Date.now()}`,
-      progress: 0,
-      tasksCount: { completed: 0, total: 0 },
-      teamMembers: [
-        { name: 'Alex Morgan', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200', role: 'Owner' }
-      ]
-    };
-    setProjects([project, ...projects]);
+  const addProject = async (newProj: Omit<Project, 'id' | 'progress' | 'tasksCount' | 'teamMembers'>) => {
+    const project = await api.projects.create(newProj);
+    setProjects(prev => [project, ...prev]);
   };
 
-  const updateProject = (id: string, updates: Partial<Project>) => {
-    setProjects(projects.map(p => p.id === id ? { ...p, ...updates } : p));
+  const updateProject = async (id: string, updates: Partial<Project>) => {
+    const updated = await api.projects.update(id, updates);
+    setProjects(prev => prev.map(p => (p.id === id ? updated : p)));
   };
 
-  const deleteProject = (id: string) => {
-    setProjects(projects.filter(p => p.id !== id));
+  const deleteProject = async (id: string) => {
+    await api.projects.remove(id);
+    setProjects(prev => prev.filter(p => p.id !== id));
   };
 
   // Tasks
-  const addTask = (newTask: Omit<ProjectTask, 'id' | 'createdAt'>) => {
-    const task: ProjectTask = {
-      ...newTask,
-      id: `task-${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    setTasks([task, ...tasks]);
+  const addTask = async (newTask: Omit<ProjectTask, 'id' | 'createdAt'>) => {
+    const task = await api.tasks.create(newTask);
+    setTasks(prev => [task, ...prev]);
   };
 
-  const updateTask = (id: string, updates: Partial<ProjectTask>) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, ...updates } : t));
+  const updateTask = async (id: string, updates: Partial<ProjectTask>) => {
+    const updated = await api.tasks.update(id, updates);
+    setTasks(prev => prev.map(t => (t.id === id ? updated : t)));
   };
 
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter(t => t.id !== id));
+  const deleteTask = async (id: string) => {
+    await api.tasks.remove(id);
+    setTasks(prev => prev.filter(t => t.id !== id));
   };
 
-  const toggleTaskComplete = (id: string) => {
-    setTasks(tasks.map(t => {
-      if (t.id === id) {
-        const newStatus = t.status === 'Completed' ? 'In Progress' : 'Completed';
-        return { ...t, status: newStatus };
-      }
-      return t;
-    }));
+  const toggleTaskComplete = async (id: string) => {
+    const updated = await api.tasks.toggleComplete(id);
+    setTasks(prev => prev.map(t => (t.id === id ? updated : t)));
   };
 
   // Files
-  const addFile = (newFile: Omit<ProjectFile, 'id' | 'uploadedAt'>) => {
-    const file: ProjectFile = {
-      ...newFile,
-      id: `file-${Date.now()}`,
-      uploadedAt: new Date().toISOString().split('T')[0]
-    };
-    setFiles([file, ...files]);
+  const addFile = async (newFile: Omit<ProjectFile, 'id' | 'uploadedAt'>) => {
+    const file = await api.files.create(newFile);
+    setFiles(prev => [file, ...prev]);
   };
 
-  const deleteFile = (id: string) => {
-    setFiles(files.filter(f => f.id !== id));
+  const deleteFile = async (id: string) => {
+    await api.files.remove(id);
+    setFiles(prev => prev.filter(f => f.id !== id));
   };
 
   // Service Request
-  const requestService = (serviceId: string, title: string, category: string, budget: string, notes: string) => {
-    const req: ServiceRequest = {
-      id: `req-${Date.now()}`,
-      serviceId,
-      serviceTitle: title,
-      category,
-      status: 'Requested',
-      requestedAt: new Date().toISOString().split('T')[0],
-      estimatedDelivery: 'TBD',
-      budget,
-      notes
-    };
-    setServiceRequests([req, ...serviceRequests]);
+  const requestService = async (serviceId: string, title: string, category: string, budget: string, notes: string) => {
+    const req = await api.serviceRequests.create(serviceId, title, category, budget, notes);
+    setServiceRequests(prev => [req, ...prev]);
   };
 
   // Notifications
-  const markNotificationRead = (id: string) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  const markNotificationRead = async (id: string) => {
+    const updated = await api.notifications.markRead(id);
+    setNotifications(prev => prev.map(n => (n.id === id ? updated : n)));
   };
 
-  const markAllNotificationsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  const markAllNotificationsRead = async () => {
+    await api.notifications.markAllRead();
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   // Messages
-  const sendMessage = (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => {
-    const newMsg: MessageItem = {
-      id: `msg-${Date.now()}`,
-      conversationId,
-      sender: {
-        id: 'user-001',
-        name: 'Alex Morgan',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-        isSelf: true
-      },
-      text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      attachments
-    };
+  const sendMessage = async (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => {
+    const newMsg = await api.conversations.send(conversationId, text, attachments);
 
     setMessages(prev => ({
       ...prev,
       [conversationId]: [...(prev[conversationId] || []), newMsg]
     }));
 
-    setConversations(conversations.map(c => {
+    setConversations(prev => prev.map(c => {
       if (c.id === conversationId) {
-        return {
-          ...c,
-          lastMessage: text,
-          lastMessageTime: 'Just now'
-        };
+        return { ...c, lastMessage: text, lastMessageTime: 'Just now' };
       }
       return c;
     }));
   };
 
   // Team
-  const inviteTeamMember = (name: string, email: string, role: TeamMember['role'], department: string) => {
-    const member: TeamMember = {
-      id: `tm-${Date.now()}`,
-      name,
-      email,
-      avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200`,
-      role,
-      status: 'Pending',
-      department,
-      joinedDate: 'Just now'
-    };
-    setTeamMembers([...teamMembers, member]);
+  const inviteTeamMember = async (name: string, email: string, role: TeamMember['role'], department: string) => {
+    const member = await api.team.invite(name, email, role, department);
+    setTeamMembers(prev => [...prev, member]);
   };
 
-  const updateTeamMemberRole = (id: string, role: TeamMember['role']) => {
-    setTeamMembers(teamMembers.map(m => m.id === id ? { ...m, role } : m));
+  const updateTeamMemberRole = async (id: string, role: TeamMember['role']) => {
+    const updated = await api.team.updateRole(id, role);
+    setTeamMembers(prev => prev.map(m => (m.id === id ? updated : m)));
   };
 
-  const removeTeamMember = (id: string) => {
-    setTeamMembers(teamMembers.filter(m => m.id !== id));
+  const removeTeamMember = async (id: string) => {
+    await api.team.remove(id);
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
   };
 
   // Support
-  const createSupportTicket = (subject: string, category: SupportTicket['category'], priority: SupportTicket['priority'], description: string) => {
-    const ticket: SupportTicket = {
-      id: `tkt-${Date.now()}`,
-      ticketNumber: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
-      subject,
-      category,
-      priority,
-      description,
-      status: 'Open',
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0],
-      attachmentsCount: 0
-    };
-    setSupportTickets([ticket, ...supportTickets]);
+  const createSupportTicket = async (subject: string, category: SupportTicket['category'], priority: SupportTicket['priority'], description: string) => {
+    const ticket = await api.support.createTicket(subject, category, priority, description);
+    setSupportTickets(prev => [ticket, ...prev]);
+  };
+
+  // Billing
+  const upgradePlan = async (planId: string) => {
+    await api.billing.upgrade(planId);
+    const plans = await api.billing.plans();
+    setBillingPlans(plans);
   };
 
   return (
@@ -259,7 +300,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         messages,
         teamMembers,
         billingPlans,
+        invoices,
         supportTickets,
+        faqs,
+        isLoading,
         addProject,
         updateProject,
         deleteProject,
@@ -277,6 +321,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         updateTeamMemberRole,
         removeTeamMember,
         createSupportTicket,
+        upgradePlan,
         searchQuery,
         setSearchQuery,
         isSearchModalOpen,
