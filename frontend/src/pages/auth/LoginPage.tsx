@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -24,14 +24,14 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    if (!identifier || !password) {
       setError('Please fill in both email and password.');
       return;
     }
 
     setLoading(true);
     try {
-      await login(email, password);
+      await login(identifier, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid login credentials. Please try again.');
@@ -71,10 +71,10 @@ export const LoginPage: React.FC = () => {
           <div className="relative">
             <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-[#A6815B]" />
             <input
-              type="email"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               placeholder="name@company.com"
               className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#241812] border border-[#D4B483]/50 dark:border-[#463226] rounded-xl text-sm text-[#2E1F17] dark:text-[#F8F4EB] focus:outline-none focus:ring-2 focus:ring-[#D4B483]"
             />

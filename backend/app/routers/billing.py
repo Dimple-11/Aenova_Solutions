@@ -16,7 +16,7 @@ def list_plans(current_user: User = Depends(get_current_user), db: Session = Dep
     result = []
     for plan in plans:
         out = BillingPlanOut.model_validate(plan)
-        out.isCurrent = bool(subscription and subscription.plan_id == plan.id)
+        out.is_current = bool(subscription and subscription.plan_id == plan.id)
         result.append(out)
     return result
 
@@ -30,7 +30,7 @@ def get_current_subscription(current_user: User = Depends(get_current_user), db:
     if not plan:
         return None
     out = BillingPlanOut.model_validate(plan)
-    out.isCurrent = True
+    out.is_current = True 
     return out
 
 
@@ -53,7 +53,7 @@ def upgrade_plan(
     db.commit()
     # In production, this is where you would call Stripe/Paddle to create/update the subscription.
     out = BillingPlanOut.model_validate(plan)
-    out.isCurrent = True
+    out.is_current = True
     return out
 
 

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import (
     create_access_token,
+    create_admin_access_token,
     create_refresh_token,
     decode_token,
     hash_password,
@@ -14,7 +15,7 @@ from app.core.security import (
 )
 from app.database import get_db
 from app.deps import get_current_user
-from app.models import PasswordResetToken, User
+from app.models import Admin, PasswordResetToken, User
 from app.schemas import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
@@ -54,15 +55,23 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
+    user = (
+        db.query(User)
+        .filter(
+            (User.email == form_data.username)
+            | (User.phone == form_data.username)
+        )
+        .first()
+    )
+
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password.",
+            detail="Invalid email/phone or password.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return _issue_tokens(user.id)
 
+    return _issue_tokens(user.id)
 
 @router.post("/refresh", response_model=TokenResponse)
 def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
@@ -118,3 +127,29 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     reset.used = True
     db.commit()
     return {"message": "Password has been reset successfully."}
+
+@router.post("/admin/login", response_model=TokenResponse)
+def admin_login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    admin = (
+        db.query(Admin)
+        .filter(Admin.username == form_data.username)
+        .first()
+    )
+
+    if not admin or not verify_password(
+        form_data.password,
+        admin.hashed_password,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin username or password.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return TokenResponse(
+        access_token=create_admin_access_token(admin.id),
+        refresh_token=create_refresh_token(admin.id),
+    )

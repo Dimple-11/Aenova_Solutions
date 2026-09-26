@@ -40,3 +40,13 @@ def decode_token(token: str) -> dict[str, Any] | None:
         return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
     except JWTError:
         return None
+def create_admin_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
+    expire = datetime.now(timezone.utc) + (
+        expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
+    )
+    payload: dict[str, Any] = {
+        "sub": subject,
+        "exp": expire,
+        "type": "admin_access",
+    }
+    return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)

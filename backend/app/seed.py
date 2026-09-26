@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.models import FAQ, BillingPlan
+from app.core.security import hash_password
+from app.models import Admin, FAQ, BillingPlan
 
 DEFAULT_PLANS = [
     {
@@ -47,13 +48,31 @@ DEFAULT_FAQS = [
         "answer": "All invoices are available under Billing & Subscription in the Billing History section as downloadable PDFs.",
     },
 ]
-
-
+DEFAULT_ADMIN = {
+    "username": "admin",
+    "name": "Aevona Administrator",
+    "password": "YOUR_REAL_PASSWORD",
+}
 def seed_defaults(db: Session) -> None:
     if db.query(BillingPlan).count() == 0:
         for plan in DEFAULT_PLANS:
             db.add(BillingPlan(**plan))
+
     if db.query(FAQ).count() == 0:
         for faq in DEFAULT_FAQS:
             db.add(FAQ(**faq))
+
+    admin = db.query(Admin).filter(Admin.username == "admin").first()
+
+    if admin is None:
+        db.add(
+            Admin(
+                username=DEFAULT_ADMIN["username"],
+                name=DEFAULT_ADMIN["name"],
+                hashed_password=hash_password(DEFAULT_ADMIN["password"]),
+            )
+        )
+    else:
+        admin.hashed_password = hash_password(DEFAULT_ADMIN["password"])
+
     db.commit()

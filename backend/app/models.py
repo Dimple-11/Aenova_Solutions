@@ -246,3 +246,21 @@ class FAQ(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: gen_id("faq"))
     question: Mapped[str] = mapped_column(String)
     answer: Mapped[str] = mapped_column(Text)
+class Admin(Base):
+    __tablename__ = "admins"
+
+    id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        default=lambda: gen_id("admin"),
+    )
+    username: Mapped[str] = mapped_column(
+        String,
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, default="Active")
+    created_at: Mapped[date] = mapped_column(Date, default=date.today)
