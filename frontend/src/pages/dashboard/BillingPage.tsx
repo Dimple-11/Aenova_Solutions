@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { CreditCard, Download, Check, Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
-import { billingPlansMock, invoicesMock } from '../../data/mockData';
+import { useDashboard } from '../../context/DashboardContext';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
 export const BillingPage: React.FC = () => {
-  const [plans] = useState(billingPlansMock);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { billingPlans: plans, invoices, upgradePlan } = useDashboard();
+  const [selectedPlan, setSelectedPlan] = useState<{ id: string; name: string } | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
-  const handleSelectUpgrade = (planName: string) => {
-    setSelectedPlan(planName);
+  const handleSelectUpgrade = (planId: string, planName: string) => {
+    setSelectedPlan({ id: planId, name: planName });
     setIsCheckoutModalOpen(true);
+  };
+
+  const handleConfirmUpgrade = async () => {
+    if (!selectedPlan) return;
+    await upgradePlan(selectedPlan.id);
+    setIsCheckoutModalOpen(false);
   };
 
   return (
@@ -41,7 +47,10 @@ export const BillingPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="gold" size="md" onClick={() => handleSelectUpgrade('Business')}>
+          <Button variant="gold" size="md" onClick={() => {
+            const business = plans.find(p => p.name === 'Business');
+            if (business) handleSelectUpgrade(business.id, business.name);
+          }}>
             Upgrade Plan
           </Button>
         </div>
@@ -119,7 +128,7 @@ export const BillingPage: React.FC = () => {
                 fullWidth
                 size="sm"
                 disabled={p.isCurrent}
-                onClick={() => handleSelectUpgrade(p.name)}
+                onClick={() => handleSelectUpgrade(p.id, p.name)}
               >
                 {p.isCurrent ? 'Active Tier' : `Select ${p.name}`}
               </Button>
@@ -135,7 +144,7 @@ export const BillingPage: React.FC = () => {
         </h3>
 
         <div className="divide-y divide-[#EFE7D5] dark:divide-[#3D2C23]">
-          {invoicesMock.map((inv) => (
+          {invoices.map((inv) => (
             <div key={inv.id} className="py-4 flex items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
@@ -156,23 +165,28 @@ export const BillingPage: React.FC = () => {
               </div>
             </div>
           ))}
+          {invoices.length === 0 && (
+            <div className="py-8 text-center text-xs text-[#6B4E3A]/60 italic">
+              No invoices yet. Your billing history will appear here once you're on a paid plan.
+            </div>
+          )}
         </div>
       </div>
 
       {/* CHECKOUT MODAL PREVIEW */}
-      <Modal isOpen={isCheckoutModalOpen} onClose={() => setIsCheckoutModalOpen(false)} title={`Upgrade to ${selectedPlan} Plan`}>
+      <Modal isOpen={isCheckoutModalOpen} onClose={() => setIsCheckoutModalOpen(false)} title={`Upgrade to ${selectedPlan?.name ?? ''} Plan`}>
         <div className="space-y-4 text-center py-4">
           <ShieldCheck className="w-12 h-12 text-[#D4B483] mx-auto" />
           <h3 className="text-base font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
-            Frontend Payment Preview Mode
+            Confirm Plan Upgrade
           </h3>
           <p className="text-xs text-[#6B4E3A] dark:text-[#D4B483]/80">
-            This SaaS application uses a frontend mock layer. In production, this modal connects directly to Stripe or Paddle payment gateways.
+            This connects to the Aevona billing API. In production, this step also redirects to Stripe/Paddle for payment collection.
           </p>
           <div className="pt-2 flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={() => setIsCheckoutModalOpen(false)}>Cancel</Button>
-            <Button variant="gold" size="sm" onClick={() => { alert(`Plan upgraded to ${selectedPlan}!`); setIsCheckoutModalOpen(false); }}>
-              Simulate Upgrade Confirmation
+            <Button variant="gold" size="sm" onClick={handleConfirmUpgrade}>
+              Confirm Upgrade
             </Button>
           </div>
         </div>

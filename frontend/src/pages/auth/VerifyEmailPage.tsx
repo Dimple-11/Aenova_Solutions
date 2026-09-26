@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
 
 export const VerifyEmailPage: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, verifyEmail } = useAuth();
   const [resent, setResent] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,7 +18,8 @@ export const VerifyEmailPage: React.FC = () => {
     }, 1000);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    await verifyEmail();
     navigate('/onboarding');
   };
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
+import { useAuth } from '../../context/AuthContext';
 
 export const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -9,8 +10,12 @@ export const ResetPasswordPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { confirmResetPassword } = useAuth();
+  const token = searchParams.get('token');
 
   // Password strength calculation
   const getPasswordStrength = () => {
@@ -28,15 +33,27 @@ export const ResetPasswordPage: React.FC = () => {
 
   const strength = getPasswordStrength();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password || password !== confirmPassword) return;
+    setError('');
+
+    if (!password || password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (!token) {
+      setError('This reset link is invalid or missing. Please request a new one.');
+      return;
+    }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    const success = await confirmResetPassword(token, password);
+    setLoading(false);
+    if (success) {
       setSubmitted(true);
-    }, 1000);
+    } else {
+      setError('This reset link is invalid or has expired. Please request a new one.');
+    }
   };
 
   return (
@@ -67,6 +84,12 @@ export const ResetPasswordPage: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3.5 rounded-xl bg-rose-100 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-200">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1.5">
               New Password

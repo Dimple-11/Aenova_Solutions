@@ -1,22 +1,20 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader2, ShieldCheck } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 
 export const AuthCallbackPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const provider = searchParams.get('provider') || 'OAuth';
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      await login(`user@${provider.toLowerCase()}.com`);
-      navigate('/onboarding');
+    // Social sign-in requires a configured OAuth provider on the backend; not wired up yet.
+    const timer = setTimeout(() => {
+      navigate('/login?error=oauth_not_configured');
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [provider, login, navigate]);
+  }, [navigate]);
 
   return (
     <div className="py-12 text-center space-y-6">
