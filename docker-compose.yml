@@ -2,13 +2,20 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+
     restart: unless-stopped
+
     environment:
       DATABASE_URL: sqlite:////data/aevona.db
+
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in the root .env file}
+
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://127.0.0.1}
+
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       ADMIN_GOOGLE_EMAILS: ${ADMIN_GOOGLE_EMAILS:-}
+
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USERNAME: ${SMTP_USERNAME:-}
@@ -16,38 +23,57 @@ services:
       SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME:-Aevona Solutions}
       SMTP_USE_SSL: ${SMTP_USE_SSL:-false}
+
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+
     volumes:
       - api_data:/data
-    expose:
-      - "8000"
+
+    # Expose backend to your Windows localhost
+    ports:
+      - "8000:8000"
+
     healthcheck:
       test:
         - CMD
         - python
         - -c
-        - from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/', timeout=3)
+        - "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/', timeout=3)"
+
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
 
+
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+
       args:
         VITE_API_URL: ${VITE_API_URL:-__SAME_ORIGIN__}
+
     restart: unless-stopped
+
     depends_on:
       backend:
         condition: service_healthy
+
+    # Frontend available at http://localhost
     ports:
       - "${WEB_PORT:-80}:80"
+
     healthcheck:
-      test: [CMD-SHELL, wget -q --spider http://127.0.0.1/ || exit 1]
+      test:
+        - CMD-SHELL
+        - "wget -q --spider http://127.0.0.1/ || exit 1"
+
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 10s
+
 
 volumes:
   api_data:
