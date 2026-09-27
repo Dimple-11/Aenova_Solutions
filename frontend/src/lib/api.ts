@@ -14,7 +14,9 @@ import type {
   SupportTicket
 } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL === '__SAME_ORIGIN__'
+  ? ''
+  : import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const ACCESS_TOKEN_KEY = 'aevona_access_token';
 const REFRESH_TOKEN_KEY = 'aevona_refresh_token';
