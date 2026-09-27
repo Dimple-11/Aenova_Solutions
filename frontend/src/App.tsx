@@ -22,6 +22,8 @@ import { LegalPage } from './pages/marketing/LegalPage';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
+import { AdminLoginPage } from './pages/auth/AdminLoginPage';
+import { AdminHomePage } from './pages/admin/AdminHomePage';
 import { SignupPage } from './pages/auth/SignupPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
@@ -76,6 +78,7 @@ export const App: React.FC = () => {
               {/* Auth Routes */}
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -85,6 +88,7 @@ export const App: React.FC = () => {
 
               {/* Onboarding Flow */}
               <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/admin" element={<AdminHomePage />} />
 
               {/* Authenticated SaaS Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardLayout />}>

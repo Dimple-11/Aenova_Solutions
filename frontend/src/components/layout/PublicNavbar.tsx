@@ -18,7 +18,7 @@ export const PublicNavbar: React.FC = () => {
     { name: 'Portfolio', path: '/portfolio' },
     { name: 'Case Studies', path: '/case-studies' },
     { name: 'Careers', path: '/careers' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Contact', path: '/login' },
   ];
 
   const isActive = (path: string) => {

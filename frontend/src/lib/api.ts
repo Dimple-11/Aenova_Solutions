@@ -31,6 +31,21 @@ export const tokenStorage = {
   }
 };
 
+const ADMIN_ACCESS_TOKEN_KEY = 'aevona_admin_access_token';
+const ADMIN_REFRESH_TOKEN_KEY = 'aevona_admin_refresh_token';
+
+export const adminTokenStorage = {
+  getAccessToken: () => localStorage.getItem(ADMIN_ACCESS_TOKEN_KEY),
+  setTokens: (access: string, refresh: string) => {
+    localStorage.setItem(ADMIN_ACCESS_TOKEN_KEY, access);
+    localStorage.setItem(ADMIN_REFRESH_TOKEN_KEY, refresh);
+  },
+  clear: () => {
+    localStorage.removeItem(ADMIN_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
+  }
+};
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -107,11 +122,44 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ full_name: fullName, email, company, password })
       }),
+
     login: (email: string, password: string) =>
       request<TokenResponse>('/api/auth/login', {
         method: 'POST',
         body: new URLSearchParams({ username: email, password })
       }),
+
+    googleLogin: (credential: string) =>
+      request<TokenResponse>('/api/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ credential })
+      }),
+
+    adminGoogleLogin: async (credential: string) => {
+      const response = await fetch(API_URL + '/api/auth/admin/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential })
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new ApiError(response.status, body.detail || response.statusText);
+      }
+      return (await response.json()) as TokenResponse;
+    },
+
+    adminMe: async (accessToken: string) => {
+      const response = await fetch(API_URL + '/api/auth/admin/me', {
+        headers: { Authorization: 'Bearer ' + accessToken }
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new ApiError(response.status, body.detail || response.statusText);
+      }
+      return (await response.json()) as { id: string; username: string; name: string; status: string };
+    },
+
+
     me: () => request<User>('/api/auth/me'),
     verifyEmail: () => request<User>('/api/auth/verify-email', { method: 'POST' }),
     forgotPassword: (email: string) =>
