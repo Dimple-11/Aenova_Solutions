@@ -3,6 +3,7 @@ import type {
   Project,
   ProjectTask,
   ProjectFile,
+  PortfolioItem,
   ServiceRequest,
   NotificationItem,
   Conversation,
@@ -183,6 +184,16 @@ export const api = {
     update: (id: string, data: Partial<Project>) =>
       request<Project>(`/api/projects/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/api/projects/${id}`, { method: 'DELETE' })
+  },
+
+  portfolio: {
+    list: () => request<PortfolioItem[]>('/api/portfolio'),
+    manage: () => request<PortfolioItem[]>('/api/portfolio/manage'),
+    create: (data: Omit<PortfolioItem, 'id'>) =>
+      request<PortfolioItem>('/api/portfolio', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<Omit<PortfolioItem, 'id'>>) =>
+      request<PortfolioItem>(`/api/portfolio/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/api/portfolio/${id}`, { method: 'DELETE' })
   },
 
   tasks: {
