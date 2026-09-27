@@ -34,6 +34,7 @@ import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 // Dashboard Pages
 import { DashboardHomePage } from './pages/dashboard/DashboardHomePage';
 import { ProjectsPage } from './pages/dashboard/ProjectsPage';
+import { PortfolioManagementPage } from './pages/dashboard/PortfolioManagementPage';
 import { ProjectDetailPage } from './pages/dashboard/ProjectDetailPage';
 import { ServicesDashboardPage } from './pages/dashboard/ServicesDashboardPage';
 import { AnalyticsPage } from './pages/dashboard/AnalyticsPage';
@@ -90,6 +91,7 @@ export const App: React.FC = () => {
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardHomePage />} />
                 <Route path="projects" element={<ProjectsPage />} />
+                <Route path="portfolio" element={<PortfolioManagementPage />} />
                 <Route path="projects/:id" element={<ProjectDetailPage />} />
                 <Route path="services" element={<ServicesDashboardPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />

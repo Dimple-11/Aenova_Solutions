@@ -139,6 +139,44 @@ class ProjectOut(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
+# ---------- Portfolio ----------
+class PortfolioItemCreate(BaseModel):
+    name: str = Field(min_length=1)
+    description: str = ""
+    category: str = Field(min_length=1)
+    image_url: Optional[str] = Field(default=None, alias="imageUrl")
+    project_url: Optional[str] = Field(default=None, alias="projectUrl")
+    sort_order: int = Field(default=0, alias="sortOrder")
+    published: bool = True
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PortfolioItemUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=1)
+    description: Optional[str] = None
+    category: Optional[str] = Field(default=None, min_length=1)
+    image_url: Optional[str] = Field(default=None, alias="imageUrl")
+    project_url: Optional[str] = Field(default=None, alias="projectUrl")
+    sort_order: Optional[int] = Field(default=None, alias="sortOrder")
+    published: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PortfolioItemOut(BaseModel):
+    id: str
+    name: str
+    description: str
+    category: str
+    image_url: Optional[str] = Field(default=None, alias="imageUrl")
+    project_url: Optional[str] = Field(default=None, alias="projectUrl")
+    sort_order: int = Field(alias="sortOrder")
+    published: bool
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
 # ---------- Task ----------
 class AssigneeEmbed(BaseModel):
     name: str

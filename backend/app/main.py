@@ -11,6 +11,7 @@ from app.routers import (
     files,
     messages,
     notifications,
+    portfolio,
     projects,
     service_requests,
     support,
@@ -48,6 +49,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(projects.router)
+app.include_router(portfolio.router)
 app.include_router(tasks.router)
 app.include_router(files.router)
 app.include_router(service_requests.router)
