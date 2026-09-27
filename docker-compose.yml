@@ -10,6 +10,7 @@ services:
       DATABASE_URL: sqlite:////data/aevona.db
 
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in the root .env file}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the root .env file}
 
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://127.0.0.1}
 
@@ -29,7 +30,6 @@ services:
     volumes:
       - api_data:/data
 
-    # Expose backend to your Windows localhost
     ports:
       - "8000:8000"
 
@@ -45,7 +45,6 @@ services:
       retries: 3
       start_period: 10s
 
-
   frontend:
     build:
       context: ./frontend
@@ -60,7 +59,6 @@ services:
       backend:
         condition: service_healthy
 
-    # Frontend available at http://localhost
     ports:
       - "${WEB_PORT:-80}:80"
 
@@ -73,7 +71,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
 
 volumes:
   api_data:
