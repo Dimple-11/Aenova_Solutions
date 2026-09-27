@@ -51,7 +51,7 @@ export const initialProjectsMock: Project[] = [
     progress: 68,
     startDate: '2024-08-01',
     deadline: '2024-11-15',
-    budget: '$45,000',
+    budget: '₹45,000',
     tasksCount: { completed: 18, total: 24 },
     teamMembers: [
       { name: 'Alex Morgan', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200', role: 'Lead Architect' },
@@ -69,7 +69,7 @@ export const initialProjectsMock: Project[] = [
     progress: 82,
     startDate: '2024-06-10',
     deadline: '2024-10-30',
-    budget: '$62,000',
+    budget: '₹62,000',
     tasksCount: { completed: 37, total: 45 },
     teamMembers: [
       { name: 'Alex Morgan', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200', role: 'Product Owner' },
@@ -86,7 +86,7 @@ export const initialProjectsMock: Project[] = [
     progress: 100,
     startDate: '2024-03-01',
     deadline: '2024-07-20',
-    budget: '$38,000',
+    budget: '₹38,000',
     tasksCount: { completed: 30, total: 30 },
     teamMembers: [
       { name: 'Daniel Carter', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', role: 'Data Engineer' },
@@ -103,7 +103,7 @@ export const initialProjectsMock: Project[] = [
     progress: 15,
     startDate: '2024-09-15',
     deadline: '2024-12-20',
-    budget: '$50,000',
+    budget: '₹50,000',
     tasksCount: { completed: 3, total: 20 },
     teamMembers: [
       { name: 'Olivia Reynolds', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200', role: 'Mobile Lead' }
@@ -119,7 +119,7 @@ export const initialProjectsMock: Project[] = [
     progress: 92,
     startDate: '2024-05-01',
     deadline: '2024-09-30',
-    budget: '$29,000',
+    budget: '₹29,000',
     tasksCount: { completed: 22, total: 24 },
     teamMembers: [
       { name: 'Sophia Bennett', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', role: 'Integration Engineer' }
@@ -344,7 +344,7 @@ export const activeServiceRequestsMock: ServiceRequest[] = [
     status: 'In Progress',
     requestedAt: '2024-08-01',
     estimatedDelivery: '2024-11-15',
-    budget: '$45,000',
+    budget:  '₹45,000',
     notes: 'Multi-region AWS setup for high availability.'
   },
   {
@@ -355,7 +355,7 @@ export const activeServiceRequestsMock: ServiceRequest[] = [
     status: 'In Progress',
     requestedAt: '2024-06-10',
     estimatedDelivery: '2024-10-30',
-    budget: '$62,000',
+    budget: '₹62,000',
     notes: 'EduFlow SaaS Learning Portal frontend & backend.'
   },
   {
@@ -366,7 +366,7 @@ export const activeServiceRequestsMock: ServiceRequest[] = [
     status: 'Under Review',
     requestedAt: '2024-09-24',
     estimatedDelivery: '2024-11-01',
-    budget: '$15,000',
+    budget: '₹15,000',
     notes: 'Automate invoice intake into QuickBooks and SAP.'
   }
 ];
@@ -556,7 +556,7 @@ export const billingPlansMock: BillingPlan[] = [
   {
     id: 'plan-pro',
     name: 'Professional',
-    price: '$799',
+    price: '₹799',
     billingPeriod: 'monthly',
     isPopular: true,
     isCurrent: true,
@@ -574,7 +574,7 @@ export const billingPlansMock: BillingPlan[] = [
   {
     id: 'plan-business',
     name: 'Business',
-    price: '$1,499',
+    price: '₹1,499',
     billingPeriod: 'monthly',
     features: [
       'Unlimited Active Projects',
@@ -609,7 +609,7 @@ export const invoicesMock: Invoice[] = [
     id: 'inv-1',
     number: 'INV-2024-089',
     date: 'Sep 01, 2024',
-    amount: '$12,500.00',
+    amount: '₹12,500.00',
     status: 'Paid',
     downloadUrl: '#',
     description: 'Professional Plan Subscription - September 2024 + Cloud Ops Addon'
@@ -618,7 +618,7 @@ export const invoicesMock: Invoice[] = [
     id: 'inv-2',
     number: 'INV-2024-074',
     date: 'Aug 01, 2024',
-    amount: '$12,500.00',
+    amount: '₹12,500.00',
     status: 'Paid',
     downloadUrl: '#',
     description: 'Professional Plan Subscription - August 2024'
@@ -627,7 +627,7 @@ export const invoicesMock: Invoice[] = [
     id: 'inv-3',
     number: 'INV-2024-061',
     date: 'Jul 01, 2024',
-    amount: '$9,800.00',
+    amount: '₹9,800.00',
     status: 'Paid',
     downloadUrl: '#',
     description: 'Professional Plan Subscription - July 2024'

@@ -33,7 +33,7 @@ export const AnalyticsPage: React.FC = () => {
     <div className="space-y-8">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-serif font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
+        <h1 className="text-2xl  Clarkson font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
           Platform Analytics
         </h1>
         <p className="text-xs text-[#6B4E3A] dark:text-[#D4B483]/80 mt-1">
@@ -106,8 +106,8 @@ export const AnalyticsPage: React.FC = () => {
               <AreaChart data={analyticsDataMock.usageMetrics}>
                 <defs>
                   <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={colors.gold} stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor={colors.gold} stopOpacity={0.05}/>
+                    <stop offset="5%" stopColor={colors.gold} stopOpacity={0.8} />
+                    <stop offset="95%" stopColor={colors.gold} stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#EFE7D5" opacity={0.3} />
