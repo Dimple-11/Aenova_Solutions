@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  googleLogin: (credential: string) => Promise<boolean>;
   signup: (fullName: string, email: string, company: string, password: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (updatedFields: Partial<User>) => Promise<void>;
@@ -45,6 +46,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const user = await api.auth.me();
     setCurrentUser(user);
     return true;
+  };
+  const googleLogin = async (credential: string): Promise<boolean> => {
+  const tokens = await api.auth.googleLogin(credential);
+  tokenStorage.setTokens(tokens.access_token, tokens.refresh_token);
+  const user = await api.auth.me();
+  setCurrentUser(user);
+  return true;
   };
 
   const signup = async (fullName: string, email: string, company: string, password: string): Promise<boolean> => {
@@ -93,6 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!currentUser,
         isLoading,
         login,
+        googleLogin,
         signup,
         logout,
         updateUser,

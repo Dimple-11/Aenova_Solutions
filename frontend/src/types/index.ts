@@ -87,6 +87,17 @@ export interface Project {
   budget?: string;
 }
 
+export interface PortfolioItem {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  imageUrl?: string | null;
+  projectUrl?: string | null;
+  sortOrder: number;
+  published: boolean;
+}
+
 export interface ServiceItem {
   id: string;
   title: string;

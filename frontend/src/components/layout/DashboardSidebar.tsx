@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   FolderKanban,
+  BriefcaseBusiness,
   Wrench,
   BarChart3,
   CheckSquare,
@@ -39,6 +40,9 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const mainNavItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, exact: true },
     { name: 'Projects', path: '/dashboard/projects', icon: FolderKanban },
+    ...(currentUser?.role === 'Owner' || currentUser?.role === 'Admin'
+      ? [{ name: 'Portfolio', path: '/dashboard/portfolio', icon: BriefcaseBusiness }]
+      : []),
     { name: 'Services', path: '/dashboard/services', icon: Wrench },
     { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Tasks', path: '/dashboard/tasks', icon: CheckSquare },

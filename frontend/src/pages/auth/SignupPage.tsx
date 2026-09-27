@@ -66,7 +66,7 @@ export const SignupPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
+        <h2 className="text-2xl sm:text-3xl font-Clarkson font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
           Create Enterprise Account
         </h2>
         <p className="text-sm text-[#6B4E3A] dark:text-[#D4B483]/80 mt-1">
@@ -99,7 +99,7 @@ export const SignupPage: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
+          <label className="block text-xs font-Clarkson text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
             Work Email Address *
           </label>
           <div className="relative">
@@ -116,7 +116,7 @@ export const SignupPage: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
+          <label className="block text-xs font-Clarkson text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
             Company Name *
           </label>
           <div className="relative">
@@ -134,7 +134,7 @@ export const SignupPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
+            <label className="block text-xs font-Clarkson text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
               Password *
             </label>
             <div className="relative">
@@ -158,7 +158,7 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
+            <label className="block text-xs font-Clarkson text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
               Confirm Password *
             </label>
             <div className="relative">
@@ -205,7 +205,7 @@ export const SignupPage: React.FC = () => {
             className="w-4 h-4 mt-0.5 accent-[#6B4E3A] dark:accent-[#D4B483] rounded border-[#D4B483]"
           />
           <span className="text-xs text-[#6B4E3A] dark:text-[#D4B483]/90 leading-normal">
-            I agree to the <Link to="/terms" className="underline font-semibold hover:text-[#2E1F17] dark:hover:text-[#F8F4EB]">Terms & Conditions</Link> and acknowledge the <Link to="/privacy" className="underline font-semibold hover:text-[#2E1F17] dark:hover:text-[#F8F4EB]">Privacy Policy</Link>.
+            I agree to the <Link to="/terms" className="underline font-Clarkson hover:text-[#2E1F17] dark:hover:text-[#F8F4EB]">Terms & Conditions</Link> and acknowledge the <Link to="/privacy" className="underline font-Clarkson hover:text-[#2E1F17] dark:hover:text-[#F8F4EB]">Privacy Policy</Link>.
           </span>
         </label>
 

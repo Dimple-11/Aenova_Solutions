@@ -15,13 +15,10 @@ export const PublicFooter: React.FC = () => {
               Aevona Solution is an enterprise digital solutions partner engineering scalable cloud platforms, web software, data pipelines, and custom SaaS platforms.
             </p>
             <div className="flex items-center space-x-3 pt-2">
-              <a href="#" className="w-9 h-9 rounded-lg bg-[#473224] hover:bg-[#D4B483] hover:text-[#2E1F17] flex items-center justify-center transition-colors">
+              <a href="https://www.linkedin.com/in/aevona-solutions-7a9723439/" className="w-9 h-9 rounded-lg bg-[#473224] hover:bg-[#D4B483] hover:text-[#2E1F17] flex items-center justify-center transition-colors">
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-lg bg-[#473224] hover:bg-[#D4B483] hover:text-[#2E1F17] flex items-center justify-center transition-colors">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-lg bg-[#473224] hover:bg-[#D4B483] hover:text-[#2E1F17] flex items-center justify-center transition-colors">
+              <a href="https://github.com/Dimple-11" className="w-9 h-9 rounded-lg bg-[#473224] hover:bg-[#D4B483] hover:text-[#2E1F17] flex items-center justify-center transition-colors">
                 <Github className="w-4 h-4" />
               </a>
             </div>
@@ -65,15 +62,15 @@ export const PublicFooter: React.FC = () => {
             <ul className="space-y-3 text-sm text-[#E2D3B7]/80">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#D4B483] shrink-0 mt-0.5" />
-                <span>One Market Tower, Suite 1400, San Francisco, CA 94105</span>
+                <span>Studio 51, Birmingham B4 7AH</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#D4B483] shrink-0" />
-                <a href="mailto:contact@aevona.com" className="hover:text-[#D4B483]">contact@aevona.com</a>
+                <a href="mailto:info@aevonasolution.com" className="hover:text-[#D4B483]">info@aevonasolution.com <br /> aevonasolution@gmail.com</a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#D4B483] shrink-0" />
-                <a href="tel:+15552345678" className="hover:text-[#D4B483]">+1 (555) 234-5678</a>
+                <a href="tel:+44 7404 010483, +91 98756 43914" className="hover:text-[#D4B483]">+44 7404 010483, +91 98756 43914</a>
               </li>
             </ul>
           </div>

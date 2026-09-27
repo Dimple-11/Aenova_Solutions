@@ -159,11 +159,10 @@ export const DashboardTopbar: React.FC<DashboardTopbarProps> = ({ onOpenMobileSi
                         if (n.link) navigate(n.link);
                         setNotifMenuOpen(false);
                       }}
-                      className={`p-2.5 rounded-xl cursor-pointer text-left transition-colors ${
-                        n.read
-                          ? 'hover:bg-[#F8F4EB] dark:hover:bg-[#2F2018]'
-                          : 'bg-[#D4B483]/10 dark:bg-[#D4B483]/15 hover:bg-[#D4B483]/20'
-                      }`}
+                      className={`p-2.5 rounded-xl cursor-pointer text-left transition-colors ${n.read
+                        ? 'hover:bg-[#F8F4EB] dark:hover:bg-[#2F2018]'
+                        : 'bg-[#D4B483]/10 dark:bg-[#D4B483]/15 hover:bg-[#D4B483]/20'
+                        }`}
                     >
                       <div className="flex items-start justify-between">
                         <span className="text-xs font-bold text-[#2E1F17] dark:text-[#F8F4EB]">{n.title}</span>

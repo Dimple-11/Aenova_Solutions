@@ -89,6 +89,19 @@ class Project(Base):
         return {"completed": completed, "total": total}
 
 
+class PortfolioItem(Base):
+    __tablename__ = "portfolio_items"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: gen_id("portfolio"))
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str] = mapped_column(Text, default="")
+    category: Mapped[str] = mapped_column(String, nullable=False)
+    image_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    project_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    published: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
 class ProjectTask(Base):
     __tablename__ = "tasks"
 

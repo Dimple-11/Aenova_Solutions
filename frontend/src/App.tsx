@@ -22,6 +22,8 @@ import { LegalPage } from './pages/marketing/LegalPage';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
+import { AdminLoginPage } from './pages/auth/AdminLoginPage';
+import { AdminHomePage } from './pages/admin/AdminHomePage';
 import { SignupPage } from './pages/auth/SignupPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
@@ -34,6 +36,7 @@ import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 // Dashboard Pages
 import { DashboardHomePage } from './pages/dashboard/DashboardHomePage';
 import { ProjectsPage } from './pages/dashboard/ProjectsPage';
+import { PortfolioManagementPage } from './pages/dashboard/PortfolioManagementPage';
 import { ProjectDetailPage } from './pages/dashboard/ProjectDetailPage';
 import { ServicesDashboardPage } from './pages/dashboard/ServicesDashboardPage';
 import { AnalyticsPage } from './pages/dashboard/AnalyticsPage';
@@ -76,6 +79,7 @@ export const App: React.FC = () => {
               {/* Auth Routes */}
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -85,11 +89,13 @@ export const App: React.FC = () => {
 
               {/* Onboarding Flow */}
               <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/admin" element={<AdminHomePage />} />
 
               {/* Authenticated SaaS Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardHomePage />} />
                 <Route path="projects" element={<ProjectsPage />} />
+                <Route path="portfolio" element={<PortfolioManagementPage />} />
                 <Route path="projects/:id" element={<ProjectDetailPage />} />
                 <Route path="services" element={<ServicesDashboardPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />

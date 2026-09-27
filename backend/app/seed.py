@@ -72,7 +72,5 @@ def seed_defaults(db: Session) -> None:
                 hashed_password=hash_password(DEFAULT_ADMIN["password"]),
             )
         )
-    else:
-        admin.hashed_password = hash_password(DEFAULT_ADMIN["password"])
 
     db.commit()
