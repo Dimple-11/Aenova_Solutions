@@ -1182,38 +1182,9 @@ export const HomePage: React.FC = () => {
         </div>
 
       </section>
+  </div>
 
-
-      
-
-
-          {/* Bottom */}
-          <div className="mt-14 pt-6 border-t border-[#D4B483]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-
-            <p className="text-xs text-[#6B4E3A]/60 dark:text-[#D4B483]/50">
-              © {new Date().getFullYear()} Aevona Solution. All rights reserved.
-            </p>
-
-            <div className="flex items-center gap-5 text-xs text-[#6B4E3A]/60 dark:text-[#D4B483]/50">
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Privacy
-              </span>
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Terms
-              </span>
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Security
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
+          
       
 
     
