@@ -52,6 +52,7 @@ services:
 
       args:
         VITE_API_URL: ${VITE_API_URL:-__SAME_ORIGIN__}
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
 
     restart: unless-stopped
 
