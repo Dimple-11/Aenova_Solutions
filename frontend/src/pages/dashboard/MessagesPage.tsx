@@ -4,19 +4,19 @@ import { useDashboard } from '../../context/DashboardContext';
 import { Button } from '../../components/ui/Button';
 
 export const MessagesPage: React.FC = () => {
-  const { conversations, messages, sendMessage } = useDashboard();
+  const { conversations, messages, sendMessage, isLoading } = useDashboard();
 
-  const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || 'conv-1');
+  const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || '');
   const [inputText, setInputText] = useState('');
   const [search, setSearch] = useState('');
 
   const activeConv = conversations.find(c => c.id === activeConvId) || conversations[0];
-  const activeMessages = messages[activeConvId] || [];
+  const activeMessages = activeConv ? messages[activeConv.id] || [] : [];
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
-    sendMessage(activeConvId, inputText.trim());
+    if (!inputText.trim() || !activeConv) return;
+    sendMessage(activeConv.id, inputText.trim());
     setInputText('');
   };
 
@@ -86,6 +86,8 @@ export const MessagesPage: React.FC = () => {
 
       {/* Main Conversation Area */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F4EB]/40 dark:bg-[#1A110B]/60">
+        {activeConv ? (
+          <>
         {/* Chat Header */}
         <div className="p-4 bg-white dark:bg-[#241812] border-b border-[#EFE7D5] dark:border-[#3D2C23] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -179,6 +181,21 @@ export const MessagesPage: React.FC = () => {
             Send
           </Button>
         </form>
+          </>
+        ) : (
+          <div className="flex flex-1 items-center justify-center p-8 text-center">
+            <div>
+              <h2 className="text-sm font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
+                {isLoading ? 'Loading conversations...' : 'No conversations yet'}
+              </h2>
+              {!isLoading && (
+                <p className="mt-2 text-xs text-[#6B4E3A] dark:text-[#D4B483]/70">
+                  Your messages will appear here when a conversation starts.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
