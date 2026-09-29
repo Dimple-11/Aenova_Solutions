@@ -113,14 +113,17 @@ export const ContactPage: React.FC = () => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
-        <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-7 items-stretch">
+        <div className="space-y-10">
 
 
           {/* =================================================
               CONTACT INFORMATION
           ================================================== */}
 
-          <div className="relative overflow-hidden rounded-[2rem] bg-[#2E1F17] dark:bg-[#241812] border border-[#D4B483]/30 p-7 sm:p-9 shadow-xl">
+          <div className="relative overflow-hidden rounded-[2rem] bg-[#2E1F17] dark:bg-[#241812] border border-[#D4B483]/30 p-7 sm:p-10 shadow-xl mb-10">
+
+            {/* Side accent line */}
+            <div className="absolute left-0 top-8 bottom-8 w-1 rounded-r-full bg-[#D4B483]" />
 
             {/* Decorative glow */}
             <div className="absolute -right-24 -top-24 w-72 h-72 rounded-full bg-[#D4B483]/10 blur-3xl" />
@@ -147,7 +150,7 @@ export const ContactPage: React.FC = () => {
 
 
               {/* Contact cards */}
-              <div className="mt-9 space-y-3">
+              <div className="mt-9 grid grid-cols-1 md:grid-cols-3 gap-3">
 
 
                 {/* Location */}

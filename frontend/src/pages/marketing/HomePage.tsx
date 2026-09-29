@@ -29,34 +29,34 @@ import { Button } from '../../components/ui/Button';
 export const HomePage: React.FC = () => {
   const services = [
     {
-      title: 'Web Application Development',
+      title: 'Full-Stack Web & SaaS',
       icon: Code2,
-      desc: 'Modern, responsive, high-performance web solutions built for enterprise scale.',
+      desc: 'Scalable web applications, custom software and SaaS platforms built around real business needs.',
     },
     {
-      title: 'Mobile App Development',
+      title: 'Mobile Application Development',
       icon: Smartphone,
-      desc: 'Native and cross-platform iOS and Android mobile applications with offline sync.',
+      desc: 'Modern mobile experiences designed for usability, performance and seamless digital workflows.',
     },
     {
-      title: 'Cloud Solutions & DevOps',
+      title: 'Cloud & DevOps Engineering',
       icon: Cloud,
-      desc: 'Scalable cloud infrastructure powered by modern deployment and automation practices.',
+      desc: 'Reliable cloud infrastructure, deployment pipelines, containers and scalable production systems.',
     },
     {
-      title: 'Database & Data Pipelines',
+      title: 'Data Engineering & Analytics',
       icon: Database,
-      desc: 'Reliable data architectures, pipelines, real-time processing and analytics systems.',
+      desc: 'Data pipelines, databases, analytics systems and structured data workflows for better decisions.',
     },
     {
-      title: 'IT Consulting & Stack Audit',
-      icon: Compass,
-      desc: 'Strategic technology advisory to improve architecture, scalability and technical health.',
-    },
-    {
-      title: 'Business Automation & AI',
+      title: 'AI, ML & Intelligent Automation',
       icon: Cpu,
-      desc: 'Streamline repetitive enterprise operations with intelligent automation workflows.',
+      desc: 'Practical AI and machine learning solutions combined with automation to improve business operations.',
+    },
+    {
+      title: 'UI/UX & Product Design',
+      icon: Compass,
+      desc: 'Clean, intuitive digital interfaces and product experiences designed for clarity and conversion.',
     },
   ];
 
@@ -113,13 +113,21 @@ export const HomePage: React.FC = () => {
   const technologies = [
     'React',
     'TypeScript',
+    'JavaScript',
     'Node.js',
     'Python',
     'FastAPI',
+    'Flask',
+    'Next.js',
+    'Tailwind CSS',
+    'MongoDB',
+    'PostgreSQL',
     'AWS',
     'Docker',
-    'PostgreSQL',
-    'MongoDB',
+    'Git & GitHub',
+    'REST APIs',
+    'Scikit-learn',
+    'XGBoost',
     'AI / ML',
   ];
 
@@ -323,14 +331,14 @@ export const HomePage: React.FC = () => {
           <div className="py-7 flex flex-wrap justify-center lg:justify-between gap-x-8 gap-y-4">
 
             {[
-              'Enterprise Software',
-              'Cloud Infrastructure',
-              'AI & Automation',
-              'SaaS Platforms',
-              'Digital Transformation',
+              'Full-Stack Engineering',
+              'SaaS Development',
+              'Cloud & DevOps',
+              'Data Engineering',
+              'AI & Machine Learning',
               'Business Automation',
-              'Data & Analytics',
-              'IT Consulting',
+              'UI/UX & Product Design',
+              'API & System Integration',
             ].map((item) => (
 
               <div
@@ -364,18 +372,18 @@ export const HomePage: React.FC = () => {
           {/* Section heading */}
           <div className="max-w-3xl mb-14">
 
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#A6815B] dark:text-[#D4B483]">
+            <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#A6815B] dark:text-[#D4B483]">
               Our Expertise
             </span>
 
-            <h2 className="mt-4 text-4xl sm:text-5xl font-Clarkson font-bold leading-tight">
+            <h2 className="mt-4 text-5xl sm:text-6xl font-Clarkson font-bold leading-tight">
               Technology built around
               <span className="text-[#A6815B] dark:text-[#D4B483]">
                 {' '}business outcomes.
               </span>
             </h2>
 
-            <p className="mt-5 text-sm sm:text-base text-[#6B4E3A]/80 dark:text-[#D4B483]/70 leading-7 max-w-2xl">
+            <p className="mt-5 text-base sm:text-lg text-[#6B4E3A]/80 dark:text-[#D4B483]/70 leading-7 max-w-2xl">
               From application engineering to cloud infrastructure and
               intelligent automation, we provide end-to-end technology
               services for modern organizations.
@@ -415,17 +423,17 @@ export const HomePage: React.FC = () => {
 
                     </div>
 
-                    <h3 className="mt-7 text-xl font-serif font-bold">
+                    <h3 className="mt-7 text-2xl font-serif font-bold">
                       {item.title}
                     </h3>
 
-                    <p className="mt-3 text-sm text-[#6B4E3A]/75 dark:text-[#D4B483]/65 leading-7">
+                    <p className="mt-3 text-base text-[#6B4E3A]/75 dark:text-[#D4B483]/65 leading-7">
                       {item.desc}
                     </p>
 
                     <Link
                       to="/services"
-                      className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-[#6B4E3A] dark:text-[#D4B483] group/link"
+                      className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#6B4E3A] dark:text-[#D4B483] group/link"
                     >
                       Explore Service
 
@@ -460,18 +468,18 @@ export const HomePage: React.FC = () => {
             {/* Left */}
             <div className="lg:col-span-4">
 
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#A6815B] dark:text-[#D4B483]">
+              <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#A6815B] dark:text-[#D4B483]">
                 Solutions
               </span>
 
-              <h2 className="mt-4 text-4xl sm:text-5xl font-Clarkson font-bold leading-tight">
+              <h2 className="mt-4 text-5xl sm:text-6xl font-Clarkson font-bold leading-tight">
                 Built for the way
                 <span className="text-[#A6815B] dark:text-[#D4B483]">
                   {' '}business works.
                 </span>
               </h2>
 
-              <p className="mt-6 text-sm text-[#6B4E3A]/80 dark:text-[#D4B483]/70 leading-7">
+              <p className="mt-6 text-base text-[#6B4E3A]/80 dark:text-[#D4B483]/70 leading-7">
                 Technology should solve meaningful problems. Our solutions
                 combine engineering, strategy and modern infrastructure to
                 create systems that are ready for what comes next.
@@ -520,7 +528,7 @@ export const HomePage: React.FC = () => {
 
                         </div>
 
-                        <p className="mt-3 text-sm text-[#6B4E3A]/70 dark:text-[#D4B483]/65 leading-6 max-w-xl">
+                        <p className="mt-3 text-base text-[#6B4E3A]/70 dark:text-[#D4B483]/65 leading-7 max-w-xl">
                           {solution.desc}
                         </p>
 
@@ -666,11 +674,11 @@ export const HomePage: React.FC = () => {
             {/* Content */}
             <div className="order-1 lg:order-2">
 
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#A6815B] dark:text-[#D4B483]">
+              <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#A6815B] dark:text-[#D4B483]">
                 Enterprise Technology
               </span>
 
-              <h2 className="mt-4 text-4xl sm:text-5xl font-Clarkson font-bold leading-tight">
+              <h2 className="mt-4 text-5xl sm:text-6xl font-Clarkson font-bold leading-tight">
                 Systems designed to
                 <span className="text-[#A6815B] dark:text-[#D4B483]">
                   {' '}scale with you.
@@ -695,7 +703,7 @@ export const HomePage: React.FC = () => {
 
                   <div
                     key={item}
-                    className="flex items-center gap-3 text-sm"
+                    className="flex items-center gap-3 text-base"
                   >
 
                     <CheckCircle2 className="w-5 h-5 text-[#A6815B] dark:text-[#D4B483]" />
@@ -735,7 +743,7 @@ export const HomePage: React.FC = () => {
 
           <div className="text-center max-w-2xl mx-auto">
 
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#D4B483]">
+            <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#D4B483]">
               How We Work
             </span>
 
@@ -838,7 +846,7 @@ export const HomePage: React.FC = () => {
 
             <div>
 
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#A6815B] dark:text-[#D4B483]">
+              <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#A6815B] dark:text-[#D4B483]">
                 Featured Work
               </span>
 
@@ -990,15 +998,15 @@ export const HomePage: React.FC = () => {
 
           <div className="text-center max-w-2xl mx-auto">
 
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#A6815B] dark:text-[#D4B483]">
+            <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#A6815B] dark:text-[#D4B483]">
               Technology
             </span>
 
-            <h2 className="mt-4 text-4xl sm:text-5xl font-clarkson font-bold">
+            <h2 className="mt-4 text-5xl sm:text-6xl font-Clarkson font-bold leading-tight">
               Powered by modern technology.
             </h2>
 
-            <p className="mt-5 text-sm text-[#6B4E3A]/75 dark:text-[#D4B483]/65 leading-7">
+            <p className="mt-5 text-base sm:text-lg text-[#6B4E3A]/75 dark:text-[#D4B483]/65 leading-7">
               A flexible technology ecosystem for building reliable,
               maintainable and scalable digital products.
             </p>
@@ -1006,13 +1014,13 @@ export const HomePage: React.FC = () => {
           </div>
 
 
-          <div className="mt-12 flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+          <div className="mt-12 flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
 
             {technologies.map((technology) => (
 
               <div
                 key={technology}
-                className="px-5 py-3 rounded-full bg-[#F8F4EB] dark:bg-[#241812] border border-[#D4B483]/25 text-sm font-semibold text-[#6B4E3A] dark:text-[#D4B483] hover:border-[#D4B483] hover:-translate-y-1 transition-all duration-300 shadow-sm"
+                className="px-5 py-3.5 rounded-full bg-[#F8F4EB] dark:bg-[#241812] border border-[#D4B483]/25 text-base font-semibold text-[#6B4E3A] dark:text-[#D4B483] hover:border-[#D4B483] hover:-translate-y-1 hover:shadow-md transition-all duration-300 shadow-sm"
               >
                 {technology}
               </div>
@@ -1042,7 +1050,7 @@ export const HomePage: React.FC = () => {
 
               <div className="text-center">
 
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#D4B483]">
+                <span className="text-sm font-bold uppercase tracking-[0.26em] text-[#D4B483]">
                   Our Impact
                 </span>
 
@@ -1182,35 +1190,6 @@ export const HomePage: React.FC = () => {
         </div>
 
       </section>
-
-
-      
-
-
-          {/* Bottom */}
-          <div className="mt-14 pt-6 border-t border-[#D4B483]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-
-            <p className="text-xs text-[#6B4E3A]/60 dark:text-[#D4B483]/50">
-              © {new Date().getFullYear()} Aevona Solution. All rights reserved.
-            </p>
-
-            <div className="flex items-center gap-5 text-xs text-[#6B4E3A]/60 dark:text-[#D4B483]/50">
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Privacy
-              </span>
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Terms
-              </span>
-
-              <span className="hover:text-[#2E1F17] dark:hover:text-[#F8F4EB] cursor-pointer">
-                Security
-              </span>
-
-            </div>
-
-          </div>
 
         </div>
 
