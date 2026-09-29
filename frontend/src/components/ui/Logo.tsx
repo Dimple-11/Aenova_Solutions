@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../../../images/logo.png';
 
 interface LogoProps {
   variant?: 'light' | 'dark' | 'auto';
@@ -31,7 +32,7 @@ export const Logo: React.FC<LogoProps> = ({
 
       {/* AEVONA Logo Image */}
       <img
-        src="/images/logo.png"
+        src={logo}
         alt="AEVONA Solution"
         className={`${iconSizes[size]} object-contain group-hover:scale-105 transition-transform duration-300`}
       />

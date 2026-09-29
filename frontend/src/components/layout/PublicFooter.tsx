@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../../../images/logo.png';
 import {
   Mail,
   Phone,
@@ -27,7 +28,7 @@ export const PublicFooter: React.FC = () => {
             >
               {/* Logo Image */}
               <img
-                src="/images/logo.png"
+                src={logo}
                 alt="AEVONA Solution Logo"
                 className="w-12 h-12 object-contain group-hover:scale-105 transition-transform duration-300"
               />
