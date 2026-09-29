@@ -53,6 +53,7 @@ services:
 
       args:
         VITE_API_URL: ${VITE_API_URL:-__SAME_ORIGIN__}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
 
     restart: unless-stopped
 
@@ -62,12 +63,14 @@ services:
 
     # Frontend available at http://localhost
     ports:
-      - "${WEB_PORT:-80}:80"
+      - "${WEB_PORT:-80}:10000"
+    environment:
+      BACKEND_URL: http://backend:8000
 
     healthcheck:
       test:
         - CMD-SHELL
-        - "wget -q --spider http://127.0.0.1/ || exit 1"
+        - "wget -q --spider http://127.0.0.1:10000/ || exit 1"
 
       interval: 30s
       timeout: 5s

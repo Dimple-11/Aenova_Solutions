@@ -65,8 +65,18 @@ services:
     dockerContext: frontend
     plan: free
     envVars:
+      - key: BACKEND_URL
+        fromService:
+          name: aevona-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
       - key: VITE_API_URL
         fromService:
           name: aevona-backend
           type: web
           envVarKey: RENDER_EXTERNAL_URL
+      - key: VITE_GOOGLE_CLIENT_ID
+        fromService:
+          name: aevona-backend
+          type: web
+          envVarKey: GOOGLE_CLIENT_ID
