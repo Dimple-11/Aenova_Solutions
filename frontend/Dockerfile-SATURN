@@ -12,7 +12,9 @@ RUN npm run build
 
 FROM nginx:alpine
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx's built-in entrypoint runs envsubst on *.template files, so $PORT (set by Render) is applied at startup.
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
+ENV PORT=80
 EXPOSE 80
