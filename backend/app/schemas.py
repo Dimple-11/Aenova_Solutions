@@ -306,6 +306,10 @@ class ParticipantEmbed(BaseModel):
     online: bool = False
 
 
+class ConversationCreate(BaseModel):
+    team_member_id: str
+
+
 class ConversationOut(BaseModel):
     id: str
     participant: ParticipantEmbed

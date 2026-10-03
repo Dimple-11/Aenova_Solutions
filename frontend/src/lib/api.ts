@@ -232,6 +232,11 @@ export const api = {
 
   conversations: {
     list: () => request<Conversation[]>('/api/conversations'),
+    create: (teamMemberId: string) =>
+      request<Conversation>('/api/conversations', {
+        method: 'POST',
+        body: JSON.stringify({ team_member_id: teamMemberId })
+      }),
     messages: (conversationId: string) => request<MessageItem[]>(`/api/conversations/${conversationId}/messages`),
     send: (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) =>
       request<MessageItem>(`/api/conversations/${conversationId}/messages`, {

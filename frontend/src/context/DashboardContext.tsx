@@ -53,6 +53,7 @@ interface DashboardContextType {
   markNotificationRead: (id: string) => Promise<void>;
   markAllNotificationsRead: () => Promise<void>;
 
+  createConversation: (teamMemberId: string) => Promise<Conversation>;
   sendMessage: (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => Promise<void>;
 
   inviteTeamMember: (name: string, email: string, role: TeamMember['role'], department: string) => Promise<void>;
@@ -243,6 +244,13 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   // Messages
+  const createConversation = async (teamMemberId: string) => {
+    const conversation = await api.conversations.create(teamMemberId);
+    setConversations(prev => [conversation, ...prev.filter(item => item.id !== conversation.id)]);
+    setMessages(prev => ({ ...prev, [conversation.id]: prev[conversation.id] || [] }));
+    return conversation;
+  };
+
   const sendMessage = async (conversationId: string, text: string, attachments?: { name: string; size: string; type: string }[]) => {
     const newMsg = await api.conversations.send(conversationId, text, attachments);
 
@@ -316,6 +324,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         requestService,
         markNotificationRead,
         markAllNotificationsRead,
+        createConversation,
         sendMessage,
         inviteTeamMember,
         updateTeamMemberRole,

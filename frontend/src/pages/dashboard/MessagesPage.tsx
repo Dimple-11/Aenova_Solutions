@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { Search, Send, Paperclip, Phone, Video, MoreVertical, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, Send, Paperclip, Phone, Video, FileText, Plus, UserPlus } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { Button } from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 export const MessagesPage: React.FC = () => {
-  const { conversations, messages, sendMessage, isLoading } = useDashboard();
+  const { conversations, messages, sendMessage, isLoading, teamMembers, createConversation } = useDashboard();
 
   const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || '');
   const [inputText, setInputText] = useState('');
   const [search, setSearch] = useState('');
+  const [isNewMessageOpen, setIsNewMessageOpen] = useState(false);
+  const [selectedMemberId, setSelectedMemberId] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState('');
 
   const activeConv = conversations.find(c => c.id === activeConvId) || conversations[0];
   const activeMessages = activeConv ? messages[activeConv.id] || [] : [];
@@ -20,14 +26,46 @@ export const MessagesPage: React.FC = () => {
     setInputText('');
   };
 
+  const handleCreateConversation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMemberId) return;
+
+    setIsCreating(true);
+    setCreateError('');
+    try {
+      const conversation = await createConversation(selectedMemberId);
+      setActiveConvId(conversation.id);
+      setIsNewMessageOpen(false);
+    } catch (error) {
+      setCreateError(error instanceof Error ? error.message : 'Could not start the conversation.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-[#241812] border border-[#D4B483]/30 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-[calc(100vh-140px)] min-h-[600px]">
       {/* Sidebar: Conversations List */}
       <div className="w-full md:w-80 border-r border-[#EFE7D5] dark:border-[#3D2C23] flex flex-col shrink-0">
         <div className="p-4 border-b border-[#EFE7D5] dark:border-[#3D2C23] space-y-3">
-          <h2 className="text-lg font-serif font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
-            Team Messages
-          </h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-lg font-serif font-bold text-[#2E1F17] dark:text-[#F8F4EB]">
+              Messages
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedMemberId(teamMembers[0]?.id || '');
+                setCreateError('');
+                setIsNewMessageOpen(true);
+              }}
+              title="Start a conversation"
+              aria-label="Start a conversation"
+              className="p-2 rounded-lg text-[#6B4E3A] hover:bg-[#EFE7D5] dark:text-[#D4B483] dark:hover:bg-[#31231B]"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#A6815B]" />
             <input
@@ -189,14 +227,87 @@ export const MessagesPage: React.FC = () => {
                 {isLoading ? 'Loading conversations...' : 'No conversations yet'}
               </h2>
               {!isLoading && (
-                <p className="mt-2 text-xs text-[#6B4E3A] dark:text-[#D4B483]/70">
-                  Your messages will appear here when a conversation starts.
-                </p>
+                <>
+                  <p className="mt-2 text-xs text-[#6B4E3A] dark:text-[#D4B483]/70">
+                    {teamMembers.length
+                      ? 'Start a conversation with someone on your team.'
+                      : 'Invite someone to your team to start a conversation.'}
+                  </p>
+                  {teamMembers.length ? (
+                    <Button
+                      type="button"
+                      variant="gold"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedMemberId(teamMembers[0].id);
+                        setCreateError('');
+                        setIsNewMessageOpen(true);
+                      }}
+                      icon={<Plus className="w-4 h-4" />}
+                      className="mt-4"
+                    >
+                      New message
+                    </Button>
+                  ) : (
+                    <Link
+                      to="/dashboard/team"
+                      className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#6B4E3A] hover:underline dark:text-[#D4B483]"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      Invite a team member
+                    </Link>
+                  )}
+                </>
               )}
             </div>
           </div>
         )}
       </div>
+      <Modal isOpen={isNewMessageOpen} onClose={() => setIsNewMessageOpen(false)} title="Start a conversation">
+        {teamMembers.length ? (
+          <form onSubmit={handleCreateConversation} className="space-y-4">
+            <div>
+              <label htmlFor="conversation-member" className="block text-xs font-semibold text-[#2E1F17] dark:text-[#F8F4EB] mb-1">
+                Team member
+              </label>
+              <select
+                id="conversation-member"
+                value={selectedMemberId}
+                onChange={(event) => setSelectedMemberId(event.target.value)}
+                className="w-full px-3 py-2 bg-[#F8F4EB] dark:bg-[#1A110B] border border-[#D4B483]/50 rounded-xl text-sm"
+              >
+                {teamMembers.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name} · {member.role} · {member.status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {createError && <p className="text-xs text-rose-600" role="alert">{createError}</p>}
+            <div className="flex justify-end">
+              <Button type="submit" variant="gold" size="sm" disabled={isCreating || !selectedMemberId}>
+                {isCreating ? 'Starting...' : 'Start conversation'}
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm text-[#6B4E3A] dark:text-[#D4B483]/80">
+              Add someone to your team before starting a conversation.
+            </p>
+            <div className="flex justify-end">
+              <Link
+                to="/dashboard/team"
+                onClick={() => setIsNewMessageOpen(false)}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#D4B483] px-3 py-2 text-xs font-bold text-[#2E1F17] hover:brightness-95"
+              >
+                <UserPlus className="w-4 h-4" />
+                Invite team member
+              </Link>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
